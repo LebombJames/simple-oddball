@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Simple Oddball</title>
+        <script src="https://unpkg.com/jspsych@8.2.1"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.1.0"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@2.1.0"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-preload@2.1.0"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-audio-keyboard-response@2.1.0"></script>
+        <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.1.0"></script>
+        <link href="https://unpkg.com/jspsych@8.2.1/css/jspsych.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body></body>
+    <script>
+        const jsPsych = initJsPsych({
+            on_finish() {
+                jsPsych.data.displayData();
+            }
+        });
+
+        const timeline = [];
+
+        const highTone = "assets/tone_high.wav";
+        const lowTone = "assets/tone_low.wav";
+
+        const preload = {
+            type: jsPsychPreload,
+            audio: [highTone, lowTone]
+        };
+
+        timeline.push(preload);
+
+        const instructions = {
+            type: jsPsychHtmlButtonResponse,
+            stimulus: `
+          <p>In this experiment, you will hear a series of tones, which are either of a low pitch, or a high pitch.</p>
+          <p>Whenever you hear the high rone, press the spacebar.</p>
+          <p>You can listen to the two types of tones below.</p>
+          <div>
+              <p>Low tone</p>
+              <audio controls src="${lowTone}"></audio>
+          </div>
+          <div>
+              <p>High tone</p>
+              <audio controls src="${highTone}"></audio>
+          </div>
+        `,
+            post_trial_gap: 2000,
+            choices: ["Start"]
+        };
+
+        timeline.push(instructions);
+
+        const test_stimuli = [{ stimulus: lowTone }, { stimulus: highTone, correct_response: " " }];
+
+        const fixation = {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: '<div style="font-size:60px;">+</div>',
+            choices: "NO_KEYS",
+            trial_duration: 500,
+            data: {
+                trial_name: "fixation-cross"
+            }
+        };
+
+        const test = {
+            type: jsPsychAudioKeyboardResponse,
+            stimulus: jsPsych.timelineVariable("stimulus"),
+            trial_duration: 1500,
+            choices: [" "],
+            prompt: "<p>Press spacebar if the tone is high.</p>",
+            response_ends_trial: false,
+            data: {
+                trial_name: "tone-presentation"
+            }
+        };
+
+        const test_procedure = {
+            timeline: [fixation, test],
+            timeline_variables: test_stimuli,
+            randomize_order: true,
+            repetitions: 5
+        };
+
+        timeline.push(test_procedure);
+
+        jsPsych.run(timeline);
+    </script>
+</html>
