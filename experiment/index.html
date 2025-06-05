@@ -12,6 +12,18 @@
     </head>
     <body></body>
     <script>
+        function createMarker(color = "black") {
+            // [x, y, width, height]
+            const marker = [0, 37, 100, 100];
+
+            const html = `
+            <div id="marker1" style="position: absolute; background-color: ${color};\
+            left:${marker[0]}px; top:${marker[1]}px; \
+            width:${marker[2]}px; height:${marker[3]}px";></div>
+            `;
+            document.body.insertAdjacentHTML("beforeend", html);
+        }
+
         const jsPsych = initJsPsych({
             on_finish() {
                 jsPsych.data.displayData();
@@ -72,6 +84,14 @@
             response_ends_trial: false,
             data: {
                 trial_name: "tone-presentation"
+            },
+            on_start() {
+                // Set the lux square to black
+                createMarker("black");
+            },
+            on_finish() {
+                // Set the lux square back to white
+                document.querySelector("#marker1").remove();
             }
         };
 
