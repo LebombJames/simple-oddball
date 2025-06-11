@@ -63,7 +63,10 @@
 
         timeline.push(instructions);
 
-        const test_stimuli = [{ stimulus: lowTone }, { stimulus: highTone, correct_response: " " }];
+        const test_stimuli = [
+            { stimulus: lowTone, stimulusType: "standard" },
+            { stimulus: highTone, stimulusType: "odd" }
+        ];
 
         const fixation = {
             type: jsPsychHtmlKeyboardResponse,
@@ -85,13 +88,15 @@
             data: {
                 trial_name: "tone-presentation"
             },
-            on_start() {
+            on_start(data) {
                 // Set the lux square to black
-                createMarker("black");
+                if (data.stimulus === test_stimuli.find((test) => test.stimulusType === "odd").stimulus) {
+                    createMarker("black");
+                }
             },
             on_finish() {
                 // Set the lux square back to white
-                document.querySelector("#marker1").remove();
+                document.querySelector("#marker1")?.remove();
             }
         };
 
