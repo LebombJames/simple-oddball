@@ -24,11 +24,14 @@
             document.body.insertAdjacentHTML("beforeend", html);
         }
 
+        const reps = 150;
+
         const jsPsych = initJsPsych({
             show_progress_bar: true,
             on_finish() {
                 jsPsych.data.displayData();
-            }
+            },
+            message_progress_bar: (progress) => `${Math.round(reps * progress)}/${reps}`
         });
 
         const timeline = [];
@@ -96,7 +99,7 @@
 
         const test_procedure = {
             timeline: [fixation, test],
-            repetitions: 150
+            repetitions: reps
         };
 
         timeline.push(test_procedure);
