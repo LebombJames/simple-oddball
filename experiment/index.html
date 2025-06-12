@@ -25,6 +25,7 @@
         }
 
         const jsPsych = initJsPsych({
+            show_progress_bar: true,
             on_finish() {
                 jsPsych.data.displayData();
             }
@@ -63,11 +64,6 @@
 
         timeline.push(instructions);
 
-        const test_stimuli = [
-            { stimulus: lowTone, stimulusType: "standard" },
-            { stimulus: highTone, stimulusType: "odd" }
-        ];
-
         const fixation = {
             type: jsPsychHtmlKeyboardResponse,
             stimulus: '<div style="font-size:60px;">+</div>',
@@ -80,7 +76,7 @@
 
         const test = {
             type: jsPsychAudioKeyboardResponse,
-            stimulus: jsPsych.timelineVariable("stimulus"),
+            stimulus: () => (Math.random() <= 0.8 ? lowTone : highTone),
             trial_duration: 1500,
             choices: [" "],
             prompt: "<p>Press spacebar if the tone is high.</p>",
@@ -89,16 +85,8 @@
                 trial_name: "tone-presentation"
             },
             on_start(data) {
-                if (Math.random() <= 0.8) {
-                    data.stimulus = test_stimuli[0].stimulus;
-                } else {
-                    data.stimulus = test_stimuli[1].stimulus;
-                }
-
                 // Set the lux square to black
-                if (data.stimulus === test_stimuli[1].stimulus) {
-                    createMarker("black");
-                }
+                if (data.stimulus === highTone) createMarker("black");
             },
             on_finish() {
                 // Set the lux square back to white
@@ -108,8 +96,6 @@
 
         const test_procedure = {
             timeline: [fixation, test],
-            timeline_variables: test_stimuli,
-            randomize_order: true,
             repetitions: 150
         };
 
