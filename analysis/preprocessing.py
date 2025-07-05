@@ -49,22 +49,7 @@ def load_xdf(ppt):
 
 out = pd.DataFrame()
 
-def save_bids(ppt):
-    # Save BIDS
-    bids_path = mne_bids.BIDSPath(
-        subject="001",
-        session=None,
-        run="001",
-        datatype="eeg",
-        root=path,
-        task="oddball",
-    )
-
-    # If file exist
-    if os.path.exists(bids_path):
-        print("  - skipping.")
-        return None
-
+def generate_df(ppt):
     # Load XDF
     read = False
     while not read:
@@ -136,6 +121,7 @@ def save_bids(ppt):
 
 # Save BIDS ----------------------------------------------------------------
 for ppt in os.listdir("./data/"):
-    save_bids(ppt)
+    generate_df(ppt)
+
 out.to_csv('out.csv', index=False, columns=("time", "TP9", "TP10", "AF7", "AF8","LUX2", "epoch", "participant_id"))
 print("Physio Done!")
