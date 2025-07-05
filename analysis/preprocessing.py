@@ -2,7 +2,6 @@ import os
 import time
 
 import mne
-import mne_bids
 import neurokit2 as nk
 import numpy as np
 import pandas as pd
